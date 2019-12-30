@@ -1,10 +1,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication,QMainWindow
 from Ui_MainForm import Ui_Form
-import sys
 from ExcelHandler import ExcelProcess
-import logging
-import coloredlogs
+from Utils import logger
+import sys
 
 class MainForm(QtWidgets.QMainWindow,Ui_Form):
     def __init__(self):
@@ -90,23 +89,6 @@ if __name__=="__main__":
     mainMenu.show()
 
     # logging.basicConfig(filename="Log.txt", filemode="w", level=logging.DEBUG, format="%(asctime)s[%(thread)d] %(levelname)s %(pathname)s[:%(lineno)d] %(message)s")
-
-    logger = logging.getLogger("Test")
-
-    logger.setLevel(level=logging.DEBUG)
-    formatter = logging.Formatter("%(asctime)s[%(thread)d] %(levelname)s %(pathname)s[:%(lineno)d] %(message)s")
-
-    coloredlogs.DEFAULT_FIELD_STYLES = {'asctime': {'color': 'green'}, 'levelname': {'color': 'yellow', 'bold': True}, 'name': {'color': 'blue'}, 'pathname': {'color': 'cyan'}}
-    coloredlogs.install(fmt="%(asctime)s[%(thread)d] %(levelname)s %(pathname)s[:%(lineno)d] %(message)s")
-
-    # 输出到控制台
-    streamHandler = logging.StreamHandler(sys.stdout)
-    logger.addHandler(streamHandler)
-
-    # 输出到文件
-    fileHandler = logging.FileHandler(filename="Log.txt", mode="w", encoding="utf-8")
-    fileHandler.setFormatter(formatter)
-    logger.addHandler(fileHandler)
 
     logger.info("显示处理窗口")
 

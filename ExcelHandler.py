@@ -1,5 +1,6 @@
 import pandas as pd
 import os.path
+from Utils import logger
 
 class ExcelProcess(object):
     def __init__(self):
@@ -28,7 +29,7 @@ class ExcelProcess(object):
             self.keySheet = data[1]
 
     def ShowContentSheet(self):
-        print("测试测试")
+        logger.info("测试测试")
         # for index, row in self.contentSheet.iterrows():
         #     if(index <= 5):
         #         print("行内容：", row)
@@ -36,16 +37,19 @@ class ExcelProcess(object):
         #         return
 
     def InitKeyValueData(self):
-        for index, row in self.keySheet.iterrows():
+        tempKeySheet = self.keySheet.dropna()
+        for index, row in tempKeySheet.iterrows():
             keyStr = row[0]
             valueStr = row[1]
+
             if(not keyStr in self.keyValues):
                 valueDict = {"val" : valueStr, "cotainedKeys" : []}
+
                 self.keyValues[str(keyStr)] = valueDict
                 self.keyStrs.append(str(keyStr))
             else:
                 # 由于从第二行开始才是文本内容，并且index从0开始，所以实际的行数要+3
-                print("在第{0}行有重复的key = {1}".format(index + 3, keyStr))
+                logger.warning("在第%d行有重复的key = %s", index + 3, keyStr)
                 self.multiKeyValues[keyStr] = valueStr
     
     def InitKeyContainedLists(self):
@@ -72,27 +76,27 @@ class ExcelProcess(object):
                             valueStr = self.keyValues[finalKeyStr]["val"]
                             # 把值写入对应的index里面(注意：iterrows迭代的是work copy，而非对象本身，所以不能直接对row的那个cell赋值。)
                             self.contentSheet.iloc[index, outputCol - 1] = valueStr
-                            # print("index = {0}, outputCol - 1 = {1}".format(index, outputCol - 1))
+                            # logger.info("index = {0}, outputCol - 1 = {1}".format(index, outputCol - 1))
                             # row[outputCol - 1] = valueStr
                             isFindKey = True
                             break
                 else:
                     break
-            # print("在第{0}行写入了关键字的值为：{1}".format(index + 3, row[outputCol - 1]))
+            # logger.info("在第{0}行写入了关键字的值为：{1}".format(index + 3, row[outputCol - 1]))
 
         #把列名中带unnamed字符串的列丢弃(dataFrame.columns是一个Index Object，可以用.str访问器访问Index里面的元素并进行操作)
         self.contentSheet.drop(self.contentSheet.columns[self.contentSheet.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
 
         for colLabel, _ in self.contentSheet.iteritems():
-            print(str(colLabel))
+            logger.info(str(colLabel))
 
         (_, tempFileName) = os.path.split(self.filePath)
         (fName, fExtension) = os.path.splitext(tempFileName)
         outputPath = "{0}/{1}_output{2}".format(outputFilePath, fName, fExtension)
-        print("输出文件的路径为：", outputPath)
+        logger.info("输出文件的路径为%s 文件名为%s 扩展名是%s", outputFilePath, fName, fExtension)
         with pd.ExcelWriter(outputPath) as writer:
             self.contentSheet.to_excel(writer, na_rep="", index=False)
-            print("输出文件成功")
+            logger.info("输出文件成功")
 
     def GetFinalKey(self, key, originalKey):
         for containedKey in self.keyValues[key]["cotainedKeys"]:

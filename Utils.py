@@ -1,16 +1,22 @@
-cols2skip = [2,5,8]
-writeColumns = {}
-cols = ["我是谁", "你又是谁", "我哪知道你是谁", "你爱是谁是谁我不管"]
-# valueDict = {val : "valueStr", cotainedKeys : []}
-print(type(cols))
-for strCol in cols:
-    print("strCol = {0},长度是{1}".format(strCol, len(strCol)))
+import logging
+import coloredlogs
+import sys
 
-def takeSecond(elem):
-    return elem[1]
+global logger
 
-a = 1
-if a:
-    print("a is not null")
-else:
-    print("a is null ...")
+logger = logging.getLogger("Test")
+
+logger.setLevel(level=logging.DEBUG)
+formatter = logging.Formatter("%(asctime)s[%(thread)d] %(levelname)s %(pathname)s[:%(lineno)d] %(message)s")
+
+coloredlogs.DEFAULT_FIELD_STYLES = {'asctime': {'color': 'green'}, 'levelname': {'color': 'yellow', 'bold': True}, 'name': {'color': 'blue'}, 'pathname': {'color': 'cyan'}}
+coloredlogs.install(fmt="%(asctime)s[%(thread)d] %(levelname)s %(pathname)s[:%(lineno)d] %(message)s")
+
+# 输出到控制台
+# streamHandler = logging.StreamHandler(sys.stdout)
+# logger.addHandler(streamHandler)
+
+# 输出到文件
+fileHandler = logging.FileHandler(filename="Log.txt", mode="w", encoding="utf-8")
+fileHandler.setFormatter(formatter)
+logger.addHandler(fileHandler)
