@@ -16,6 +16,8 @@ coloredlogs.install(fmt="%(asctime)s[%(thread)d] %(levelname)s %(pathname)s[:%(l
 # streamHandler = logging.StreamHandler(sys.stdout)
 # logger.addHandler(streamHandler)
 
+# testing 
+
 # 输出到文件
 fileHandler = logging.FileHandler(filename="Log.txt", mode="w", encoding="utf-8")
 fileHandler.setFormatter(formatter)
